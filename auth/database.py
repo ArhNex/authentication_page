@@ -17,12 +17,12 @@ DATABASE_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{D
 class Base(DeclarativeBase):
     pass
 
-
+    # 
 class User(SQLAlchemyBaseUserTable[int], Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     email: Mapped[str] = mapped_column(String, nullable=False)
     username: Mapped[str] = mapped_column(String, nullable=False)
-    password: Mapped[str] = mapped_column(String, nullable=False)
+    # password: Mapped[str] = mapped_column(String, nullable=False)
     registered_at: Mapped[str] = mapped_column(TIMESTAMP, default=datetime.utcnow)
     role_id: Mapped[str] = mapped_column(Integer, ForeignKey(role.c.id))
     hashed_password: Mapped[str] = mapped_column(
@@ -40,11 +40,6 @@ class User(SQLAlchemyBaseUserTable[int], Base):
 
 engine = create_async_engine(DATABASE_URL)
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
-
-
-async def create_db_and_tables():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
 
 
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
